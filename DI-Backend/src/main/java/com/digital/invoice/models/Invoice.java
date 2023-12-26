@@ -15,7 +15,7 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
@@ -23,7 +23,7 @@ public class Invoice {
     @JsonManagedReference
     private List<InvoiceItem> items = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_address_id" , referencedColumnName = "id")
     private Address billingAddress;
 
@@ -62,14 +62,6 @@ public class Invoice {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getInvoiceNumber() {
-        return invoiceNumber;
-    }
-
-    public void setInvoiceNumber(String invoiceNumber) {
-        this.invoiceNumber = invoiceNumber;
     }
 
     public void setDateCreation(Date dateCreation){

@@ -3,6 +3,10 @@ package com.digital.invoice.repository;
 import com.digital.invoice.models.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    //List<Customer> findCustomerByNameContainsIgnoreCase(String name);
+    List<Customer> getCustomersByName(String name);
 }
 

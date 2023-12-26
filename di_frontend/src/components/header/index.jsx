@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Header = () => {
    
   return (
-    <header class="pb-6 bg-white lg:pb-0">
+    <header class="pb-6 bg-white lg:pb-0 shadow-xl shadow-blue-200 px-20 my-4 rounded-lg">
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-0 pt-4 ">
        
         <nav class="flex items-center justify-between h-16 lg:h-20">
@@ -27,11 +27,18 @@ const Header = () => {
             </button>
 
             <div class="hidden lg:flex lg:items-center lg:ml-auto lg:space-x-10">
+                <Link to={"/customers"}>
                 <a href="#" title="" class="text-base font-medium text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600 no-underline"> Custumers views </a>
+                </Link>
 
+                <Link to={"/invoicesitems"}>
                 <a href="#" title="" class="text-base font-medium text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600 no-underline">All Invoices Items </a>
+                </Link>
 
-                <a href="#" title="" class="text-base font-medium text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600 no-underline"> All Address </a>
+
+                <Link to={"/invoices"}>
+                <a href="#" title="" class="text-base font-medium text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600 no-underline"> All Invoices </a>
+                </Link>
 
             </div>
             <Link to="/addinvoice"

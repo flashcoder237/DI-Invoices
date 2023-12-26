@@ -6,7 +6,9 @@ import com.digital.invoice.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -31,11 +33,27 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+    public List<Customer> getCustomersByName(String name){
+        return customerRepository.getCustomersByName(name);
+    }
+
+
     public Customer updateCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
 
-    public void deleteCustomer(Long customerId) {
-        customerRepository.deleteById(customerId);
+    public boolean deleteCustomer(Long customerId) {
+        try {
+            Optional<Customer> customerOptional = customerRepository.findById(customerId);
+
+            if (customerOptional.isPresent()) {
+                customerRepository.deleteById(customerId);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
-}
+    }

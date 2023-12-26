@@ -1,6 +1,6 @@
 import React from "react";
 
-const Select = ({ isChecked, labelSelect, listAddressItem,onSelectChange}) => {
+const Select = ({ isChecked, labelSelect, listAddressItem,onSelectChange, value}) => {
   const handleSelectChange = (e) => {
     const selectedValue = e.target.value;
     onSelectChange(selectedValue);
@@ -22,7 +22,7 @@ const Select = ({ isChecked, labelSelect, listAddressItem,onSelectChange}) => {
       >
         
         {listAddressItem.map((item, index) => (
-          <option key={index}>{item}</option>
+          <option key={index} selected={value===item}>{item}</option>
         ))}
       </select>
     </div>

@@ -3,11 +3,13 @@ import Select from "./atoms/select";
 import Input from "./atoms/input";
 import { countries, cities, streets, states, zipCodes } from './../data'
 
-const AddressForm = ({motif,onAddressChange, addressType}) => {
+const AddressForm = ({motif,onAddressChange, addressType, defaultAddress}) => {
   const [isChecked, setIsChecked] = useState(false);
-  const [address, setAddress] = useState({});
+  console.log(defaultAddress);
+  const [address, setAddress] = useState(defaultAddress);
 
   const handleAddressChange = (selectInput, name) => {
+    try{
     const addressItems = selectInput.split(',');
     setAddress({
         "street": addressItems[0].trim(),
@@ -15,8 +17,12 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
         "state": addressItems[3].trim(),
         "zipCode": addressItems[5].trim(),
         "country": addressItems[4].trim()
-   })
+      })
+    console.log("Addresse valide");
     onAddressChange(address, addressType);
+    }catch(error){
+      console.log("Addresse non valide");
+    }
   };
   const handleSelectChangeCountry = (selectedValue) => {
     setAddress({
@@ -74,7 +80,7 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
               type="text"
               name="address"
               placeholder=" "
-              labelName="Ex: 123 Rue l, bordeau, 12345, ouest, 67890, France"
+              labelName="Ex: 123 Rue l, bordeau,.."
               pattern="/^(.+),(.+),(\d{5}),(.+),(\d{5}),(.+)$/"
               required="true"
               onInputChange={handleAddressChange}
@@ -87,6 +93,7 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
         listAddressItem={countries}
         labelSelect="Select country"
         isChecked={isChecked}
+        value={defaultAddress.country}
         required
         onSelectChange={handleSelectChangeCountry}
         />
@@ -95,6 +102,7 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
         listAddressItem={cities}
         labelSelect="Select city"
         isChecked={isChecked}
+        value={defaultAddress.city}
         required
         onSelectChange={handleSelectChangeCity}
         />
@@ -103,6 +111,7 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
         listAddressItem={streets}
         labelSelect="Select street"
         isChecked={isChecked}
+        defaultAddress={defaultAddress.street}
         required
         onSelectChange={handleSelectChangeStreet}
         />
@@ -111,6 +120,7 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
         listAddressItem={states}
         labelSelect="Select states"
         isChecked={isChecked}
+        value={defaultAddress.state}
         required
         onSelectChange={handleSelectChangeState}
         />
@@ -119,6 +129,7 @@ const AddressForm = ({motif,onAddressChange, addressType}) => {
         listAddressItem={zipCodes}
         labelSelect="Select ZipCode"
         isChecked={isChecked}
+        value={defaultAddress.zipCode}
         required
         onSelectChange={handleSelectChangeZipCode}
         />

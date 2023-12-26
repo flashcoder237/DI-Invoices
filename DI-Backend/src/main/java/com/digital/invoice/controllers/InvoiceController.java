@@ -6,8 +6,10 @@ import com.digital.invoice.models.Invoice;
 import com.digital.invoice.models.InvoiceItem;
 import com.digital.invoice.services.AddressService;
 import com.digital.invoice.services.CustomerService;
+import com.digital.invoice.services.InvoiceItemService;
 import com.digital.invoice.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,13 +22,15 @@ public class InvoiceController {
 
     private final InvoiceService invoiceService;
     private final AddressService addressService;
+    private final InvoiceItemService invoiceItemService;
 
     private final CustomerService customerService;
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, AddressService addressService, CustomerService customerService) {
+    public InvoiceController(InvoiceService invoiceService, AddressService addressService, CustomerService customerService, InvoiceItemService invoiceItemService) {
         this.invoiceService = invoiceService;
         this.addressService = addressService;
         this.customerService = customerService;
+        this.invoiceItemService = invoiceItemService;
     }
 
     @GetMapping("/byBillingAddress/{billingAddressId}")
@@ -36,7 +40,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/byCustomer")
-    public List<Invoice> getInvoicesByCustomer(@RequestParam Long customerId) {
+    public Invoice getInvoicesByCustomer(@RequestParam Long customerId) {
         Customer customer = customerService.getCustomerById(customerId);
         return invoiceService.getInvoicesByCustomer(customer);
     }
@@ -49,41 +53,42 @@ public class InvoiceController {
     // Une méthode pour créer une facture
     @PostMapping
     public Invoice createInvoice(@RequestBody Invoice invoice) {
-        Invoice newInvoice = new Invoice();
-
-        Address billingAddress = invoice.getBillingAddress();
-        Customer customer = invoice.getCustomer();
-        addressService.createAddress(billingAddress);
-        customerService.createCustomer(customer);
-
-        newInvoice.setCustomer(customer);
-        newInvoice.setBillingAddress(billingAddress);
-
-        for (InvoiceItem item : invoice.getItems()) {
-            InvoiceItem invoiceItem = new InvoiceItem(item.getName(), item.getQuantity(), item.getPrice());
-            newInvoice.addInvoiceItem(invoiceItem);
-        }
-        return invoiceService.createInvoice(newInvoice);
+        return invoiceService.createInvoice(invoice);
     }
 
+    @GetMapping("/{invoice_id}")
+    public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long invoice_id){
+        Optional<Invoice> invoiceOptional = invoiceService.getInvoiceById(invoice_id);
+        return invoiceOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/list")
+    public List<Invoice> createInvoices(@RequestBody List<Invoice> invoices) {
+        return invoiceService.addInvoices(invoices);
+    }
 
     @PutMapping("/update/{invoice_id}")
     public Invoice updateInvoice(@PathVariable Long invoice_id, @RequestBody Invoice invoice) {
-        Invoice existingInvoice = invoiceService.getInvoiceById(invoice_id);
-        existingInvoice.setCustomer(invoice.getCustomer());
-        existingInvoice.setBillingAddress(invoice.getBillingAddress());
-        existingInvoice.setItems(new ArrayList<>());
+        Optional<Invoice> optionalExistingInvoice = invoiceService.getInvoiceById(invoice_id);
+        if (optionalExistingInvoice.isPresent()){
+            Invoice existingInvoice = optionalExistingInvoice.get();
+            existingInvoice.setCustomer(invoice.getCustomer());
+            existingInvoice.setBillingAddress(invoice.getBillingAddress());
+            existingInvoice.setItems(new ArrayList<>());
 
-        for (InvoiceItem item : invoice.getItems()){
-            existingInvoice.addInvoiceItem(item);
+
+            for (InvoiceItem item : invoice.getItems()){
+                existingInvoice.addInvoiceItem(item);
+            }
+            return invoiceService.updateInvoice(existingInvoice);
         }
-        return invoiceService.updateInvoice(existingInvoice);
+        return null;
     }
 
     // Une méthode pour supprimer une facture
     @DeleteMapping("/delete/{invoiceId}")
-    public void deleteInvoice(@PathVariable Long invoiceId) {
-        invoiceService.deleteInvoice(invoiceId);
+    public boolean deleteInvoice(@PathVariable Long invoiceId) {
+        return invoiceService.deleteInvoice(invoiceId);
     }
 }
 

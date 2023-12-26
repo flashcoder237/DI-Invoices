@@ -1,20 +1,25 @@
 package com.digital.invoice.services;
 
+import com.digital.invoice.models.Invoice;
 import com.digital.invoice.models.InvoiceItem;
 import com.digital.invoice.repository.InvoiceItemRepository;
+import com.digital.invoice.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class InvoiceItemService {
     private final InvoiceItemRepository invoiceItemRepository;
+    // private final InvoiceRepository invoiceRepository;
 
     @Autowired
     public InvoiceItemService(InvoiceItemRepository invoiceItemRepository) {
         this.invoiceItemRepository = invoiceItemRepository;
+       // this.invoiceRepository = invoiceRepository;
     }
 
     public List<InvoiceItem> getAllInvoiceItems() {
@@ -47,8 +52,22 @@ public class InvoiceItemService {
         }
     }
 
-    public void deleteInvoiceItem(Long id) {
-        invoiceItemRepository.deleteById(id);
+    public boolean deleteInvoiceItem(Long id) {
+        try {
+            Optional<InvoiceItem> invoiceItemOptional = invoiceItemRepository.findById(id);
+
+            if (invoiceItemOptional.isPresent()) {
+                invoiceItemRepository.deleteById(id);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
+    public List<InvoiceItem> getInvoiceItemsByName(String name) {
+        return  invoiceItemRepository.getInvoiceItemsByName(name);
+    }
 }

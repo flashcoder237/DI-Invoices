@@ -45,3 +45,25 @@ export const remove = async (url) => {
     throw error;
   }
 };
+
+// invoiceService.js
+export const deleteInvoice = async (invoiceId) => {
+  try {
+    // Effectuer la requête pour supprimer la facture avec l'ID donné
+    const response = await fetch(`/api/invoices/delete${invoiceId}`, {
+      method: 'DELETE',
+      // Autres options de requête (headers, body, etc.) si nécessaire
+    });
+
+    // Vérifier si la suppression a réussi (statut 204 No Content)
+    if (response.status === 204) {
+      return true; // Succès
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData.message);
+    }
+  } catch (error) {
+    console.error('Error deleting invoice:', error);
+    throw error;
+  }
+};
